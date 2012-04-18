@@ -15,7 +15,6 @@ void bar( int x )
     std::cout << "bar: " << x << std::endl;
 }
 
-
 struct A
 {
     void foo( int x )
@@ -33,35 +32,11 @@ struct B
 };
 
 
-struct I_v
-{
-    virtual void foo( int x ) = 0;
-    virtual void bar( int x ) = 0;
-};
-
-struct A_v : I_v
+struct A_v
 {
     virtual void foo( int x )
     {
         std::cout << "A_v::foo: " << x << std::endl;
-    }
-
-    virtual void bar( int x )
-    {
-        std::cout << "A_v::bar: " << x << std::endl;
-    }
-};
-
-struct B_v : I_v
-{
-    virtual void foo( int x )
-    {
-        std::cout << "B_v::foo: " << x << std::endl;
-    }
-
-    virtual void bar( int x )
-    {
-        std::cout << "B_v::bar: " << x << std::endl;
     }
 };
 
