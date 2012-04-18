@@ -7,7 +7,9 @@ void hook_guard::start_hook( void* src, void* dest )
     unsigned long m_old_protect;
 
     VirtualProtect( src, 5, PAGE_EXECUTE_WRITECOPY, &m_old_protect );
-    memcpy( m_src_instruction_backup, m_src, 5 );
+
+    m_src_instruction_backup[src] = new char[5];
+    memcpy(m_src_instruction_backup[src], src, 5);
     memcpy( src, dest, 5 );
 
     // adjust short jmp address
@@ -23,8 +25,12 @@ void hook_guard::stop_hook()
 {
     unsigned long m_old_protect;
 
-    VirtualProtect( m_src, 5, PAGE_EXECUTE_WRITECOPY, &m_old_protect );
-    memcpy( m_src, m_src_instruction_backup, 5 );
-    VirtualProtect( m_src, 5, PAGE_EXECUTE_READ, &m_old_protect );
+    for ( std::map<void*, char*>::iterator it = m_src_instruction_backup.begin(); it != m_src_instruction_backup.end(); ++it )
+    {
+        VirtualProtect( it->first, 5, PAGE_EXECUTE_WRITECOPY, &m_old_protect );
+        memcpy( it->first, it->second, 5 );
+        VirtualProtect( it->first, 5, PAGE_EXECUTE_READ, &m_old_protect );
+        delete it->second;
+    }
 }
 

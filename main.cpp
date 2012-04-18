@@ -4,9 +4,6 @@
 #include "stdafx.h"
 #include "HotHook.h"
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FUNCTION HOT HOOK
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void foo( int x )
 {
@@ -18,31 +15,6 @@ void bar( int x )
     std::cout << "bar: " << x << std::endl;
 }
 
-void function_caller()
-{
-    foo( 1 );
-    bar( 2 );
-}
-
-void hot_hook_function()
-{
-    std::cout << "[FUNCTION HOT HOOK] ==> BEFORE" << std::endl;
-    function_caller();
-
-    {
-        std::cout << "[FUNCTION HOT HOOK] ==> START" << std::endl;
-        hook_guard guard( foo, bar );
-        function_caller();
-    }
-
-    std::cout << "[FUNCTION HOT HOOK] ==> STOP" << std::endl;
-    function_caller();
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// MEMBER FUNCTION HOT HOOK
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct A
 {
@@ -60,75 +32,70 @@ struct B
     }
 };
 
-void member_function_caller()
+
+struct I_v
 {
-    A().foo( 1 );
-    B().bar( 2 );
-}
+    virtual void foo( int x ) = 0;
+    virtual void bar( int x ) = 0;
+};
 
-void hot_hook_member_function()
-{
-    std::cout << "[MEMBER FUNCTION HOT HOOK] ==> BEFORE" << std::endl;
-    member_function_caller();
-
-    {
-        std::cout << "[MEMBER FUNCTION HOT HOOK] ==> START" << std::endl;
-        hook_guard guard( &A::foo, &B::bar );
-        member_function_caller();
-    }
-
-    std::cout << "[MEMBER FUNCTION HOT HOOK] ==> STOP" << std::endl;
-    member_function_caller();
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// VIRTUAL MEMBER FUNCTION HOT HOOK
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-struct A_v
+struct A_v : I_v
 {
     virtual void foo( int x )
     {
         std::cout << "A_v::foo: " << x << std::endl;
     }
+
+    virtual void bar( int x )
+    {
+        std::cout << "A_v::bar: " << x << std::endl;
+    }
 };
 
-struct B_v
+struct B_v : I_v
 {
+    virtual void foo( int x )
+    {
+        std::cout << "B_v::foo: " << x << std::endl;
+    }
+
     virtual void bar( int x )
     {
         std::cout << "B_v::bar: " << x << std::endl;
     }
 };
 
-void virtual_member_function_caller()
+
+void caller()
 {
-    A_v().foo( 1 );
-    B_v().bar( 2 );
+    foo( 1 );
+    A().foo( 2 );
+    A_v().foo( 3 );
 }
 
-void hot_hook_virtual_member_function()
+
+void hook_test()
 {
-    std::cout << "[VIRTUAL MEMBER FUNCTION HOT HOOK] ==> BEFORE" << std::endl;
-    virtual_member_function_caller();
+    std::cout << "-------------------- BEFORE --------------------" << std::endl;
+    caller();
 
     {
-        std::cout << "[VIRTUAL MEMBER FUNCTION HOT HOOK] ==> START" << std::endl;
-        hook_guard guard( &A_v(), &B_v(), 0 );
-        virtual_member_function_caller();
+        std::cout << "-------------------- START  --------------------" << std::endl;
+        hook_guard guard;
+        guard.hook_function( foo, bar );
+        guard.hook_member_function( &A::foo, &B::bar );
+        guard.hook_virtual_member_function( &A_v(), 0, &B::bar );
+        caller();
     }
 
-    std::cout << "[VIRTUAL MEMBER FUNCTION HOT HOOK] ==> STOP" << std::endl;
-    virtual_member_function_caller();
+    std::cout << "-------------------- STOP   --------------------" << std::endl;
+    caller();
 }
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    hot_hook_function();
-    hot_hook_member_function();
-    hot_hook_virtual_member_function();
+    hook_test();
 
     return 0;
 }
