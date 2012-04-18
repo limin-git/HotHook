@@ -9,8 +9,8 @@ public:
     template<typename src_mem_fun_type, typename dest_mem_fun_type>
     hook_guard( src_mem_fun_type src_mem_fun, dest_mem_fun_type dest_mem_fun )
     {
-        m_src = (void*)( *( ( long *)&src_mem_fun ) );
-        void* dest = (void*)( *( ( long *)&dest_mem_fun ) );
+        m_src = get_member_function_address( src_mem_fun );
+        void* dest = get_member_function_address( dest_mem_fun );
 
         memcpy( m_src_instruction_backup, m_src, 5 );
         start_hook( m_src, dest );
@@ -34,6 +34,11 @@ private:
     void start_hook( void* src, void* dest );
     void stop_hook();
 
+    template<typename mem_fun_type> void* get_member_function_address( mem_fun_type mem_fun_address )
+    {
+        return (void*)( *( ( long *)&mem_fun_address ) );
+    }
+
 private:
 
     void* m_src;
@@ -41,10 +46,7 @@ private:
 };
 
 
-template<typename mem_fun_type> void* get_member_function_address( mem_fun_type mem_fun_address )
-{
-    return (void*)( *( ( long *)&mem_fun_address ) );
-}
+
 
 
 #endif
