@@ -1,0 +1,7 @@
+/.parasoft.dat/
+/Debug/
+*.ncb
+*.sln
+*.user
+*.suo
+git-command.txt
