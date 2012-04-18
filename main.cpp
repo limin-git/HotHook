@@ -29,12 +29,8 @@ void hot_hook_function()
     std::cout << "[FUNCTION HOT HOOK] ==> BEFORE" << std::endl;
     function_caller();
 
-    std::cout << "[FUNCTION HOT HOOK] ==> START" << std::endl;
-
     {
-        void* src_address = foo;
-        void* dest_address = bar;
-
+        std::cout << "[FUNCTION HOT HOOK] ==> START" << std::endl;
         hook_guard guard( foo, bar );
         function_caller();
     }
@@ -75,18 +71,9 @@ void hot_hook_member_function()
     std::cout << "[MEMBER FUNCTION HOT HOOK] ==> BEFORE" << std::endl;
     member_function_caller();
 
-    std::cout << "[MEMBER FUNCTION HOT HOOK] ==> START" << std::endl;
-
     {
-        typedef void (A::* AMemFun)(int);
-        AMemFun foo_ptr = &A::foo;
-        void* src = (void*)( *( ( long *)&foo_ptr ) );
-
-        typedef void (B::* BMemFun)(int);
-        BMemFun bar_ptr = &B::bar;
-        void* dest = (void*)( *( ( long *)&bar_ptr ) );
-
-        hook_guard guard( src, dest );
+        std::cout << "[MEMBER FUNCTION HOT HOOK] ==> START" << std::endl;
+        hook_guard guard( &A::foo, &B::bar );
         member_function_caller();
     }
 
