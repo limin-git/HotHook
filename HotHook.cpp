@@ -7,6 +7,7 @@ void hook_guard::start_hook( void* src, void* dest )
     unsigned long m_old_protect;
 
     VirtualProtect( src, 5, PAGE_EXECUTE_WRITECOPY, &m_old_protect );
+    memcpy( m_src_instruction_backup, m_src, 5 );
     memcpy( src, dest, 5 );
 
     // adjust short jmp address

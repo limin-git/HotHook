@@ -104,13 +104,8 @@ struct B_v
 
 void virtual_member_function_caller()
 {
-    A_v* pa = new A_v;
-    pa->foo( 1 );
-    delete pa;
-
-    B_v* pb = new B_v;
-    pb->bar( 2 );
-    delete pb;
+    A_v().foo( 1 );
+    B_v().bar( 2 );
 }
 
 void hot_hook_virtual_member_function()
@@ -118,20 +113,9 @@ void hot_hook_virtual_member_function()
     std::cout << "[VIRTUAL MEMBER FUNCTION HOT HOOK] ==> BEFORE" << std::endl;
     virtual_member_function_caller();
 
-    std::cout << "[VIRTUAL MEMBER FUNCTION HOT HOOK] ==> START" << std::endl;
-
     {
-        A_v* pa = new A_v;
-        unsigned long** vtable_a = reinterpret_cast<unsigned long**>(pa);
-        void* src = (void*)( (*vtable_a)[0] );
-        delete pa;
-
-        B_v* pb = new B_v;
-        unsigned long** vtable_b = reinterpret_cast<unsigned long**>(pb);
-        void* dest = (void*)( (*vtable_b)[0] );
-        delete pb;
-
-        hook_guard guard( src, dest );
+        std::cout << "[VIRTUAL MEMBER FUNCTION HOT HOOK] ==> START" << std::endl;
+        hook_guard guard( &A_v(), &B_v(), 0 );
         virtual_member_function_caller();
     }
 
