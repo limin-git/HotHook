@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "HotHook.h"
-#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FUNCTION HOT HOOK
@@ -35,6 +34,7 @@ void hot_hook_function()
     {
         void* src_address = foo;
         void* dest_address = bar;
+
         hook_guard guard( foo, bar );
         function_caller();
     }

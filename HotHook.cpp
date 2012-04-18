@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "HotHook.h"
-#include "windows.h"
 
 
 #define FUNCTION_ENTRY(x)
