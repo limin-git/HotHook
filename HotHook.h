@@ -24,7 +24,7 @@ public:
 
 private:
 
-    std::map<void*, char*> m_src_instruction_backup;
+    std::map<void*, long> m_src_address_backup;
 };
 
 
