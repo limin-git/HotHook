@@ -9,26 +9,15 @@ class hook_guard
 {
 public:
 
-    hook_guard() {}
-
     hook_guard( void* src, void* dest )
     {
-        hook_function( src, dest );
+        start_hook( src, dest );
     }
 
     ~hook_guard()
     {
         stop_hook();
     }
-
-public:
-
-    void hook_function( void* src, void* dest )
-    {
-        start_hook( src, dest );
-    }
-
-private:
 
     void start_hook( void* src, void* dest );
     void stop_hook();
