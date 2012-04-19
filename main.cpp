@@ -5,47 +5,49 @@
 #include "HotHook.h"
 
 
-void foo( int x )
-{
-    std::cout << "foo: " << x << std::endl;
-}
-
-void bar( int x )
-{
-    std::cout << "bar: " << x << std::endl;
-}
-
 struct A
 {
-    void foo( int x )
+    static void foo( int x )
     {
         std::cout << "A::foo: " << x << std::endl;
+    }
+
+    void bar( int x )
+    {
+        std::cout << "A::bar: " << x << std::endl;
+    }
+
+    virtual void foobar( int x )
+    {
+        std::cout << "A::foobar: " << x << std::endl;
     }
 };
 
 struct B
 {
+    static void foo( int x )
+    {
+        std::cout << "B::foo: " << x << std::endl;
+    }
+
     void bar( int x )
     {
         std::cout << "B::bar: " << x << std::endl;
     }
-};
 
-
-struct A_v
-{
-    virtual void foo( int x )
+    virtual void foobar( int x )
     {
-        std::cout << "A_v::foo: " << x << std::endl;
+        std::cout << "B::foobar: " << x << std::endl;
     }
 };
 
 
 void caller()
 {
-    foo( 1 );
-    A().foo( 2 );
-    A_v().foo( 3 );
+    A a;
+    a.foo( 1 );
+    a.bar( 2 );
+    a.foobar( 3 );
 }
 
 
@@ -56,10 +58,9 @@ void hook_test()
 
     {
         std::cout << "-------------------- START  --------------------" << std::endl;
-        hook_guard guard;
-        guard.hook_function( foo, bar );
-        guard.hook_member_function( &A::foo, &B::bar );
-        guard.hook_virtual_member_function( &A_v(), 0, &B::bar );
+        hook_guard guard(A::foo, B::foo);
+        hook_member_function_guard( A::bar, B::bar );
+        hook_member_function_guard( A::foobar, B::foobar );
         caller();
     }
 
