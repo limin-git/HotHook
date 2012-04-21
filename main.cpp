@@ -58,7 +58,7 @@ void hook_test()
 
     {
         std::cout << "-------------------- START  --------------------" << std::endl;
-        hook_guard guard(A::foo, B::foo);
+        hook_member_function_guard( A::foo, B::foo );
         hook_member_function_guard( A::bar, B::bar );
         hook_member_function_guard( A::foobar, B::foobar );
         caller();
